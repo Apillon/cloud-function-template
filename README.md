@@ -39,6 +39,27 @@ This template and deployment process allow you to leverage Acurast's decentraliz
 
 - **Callbacks**: The code includes placeholders for success and error callbacks. You can define what actions to take when the connection is successfully established or if an error occurs.
 
+### Received Object Structure
+
+When a JSON payload is sent to this job, the received object has the following structure:
+```typescript
+{
+  body: object;
+  headers: Record<string, string>;
+  path: string;
+  queryStringParameters: Record<string, string>;
+  multiValueQueryStringParameters: { [name: string]: string[]; };
+  pathParameters: Record<string, string>;
+}
+```
+
+- **`body`**: This property contains the parsed JSON payload from the request. The `safeJsonParse` function is used to safely parse the `event.body`, falling back to the raw `event.body` if parsing fails.
+- **`headers`**: This object includes all the HTTP headers sent with the request. Headers can be used for authentication, content type specification, and more.
+- **`path`**: This string represents the path of the request URL. It can be used to determine the specific endpoint that was called.
+- **`queryStringParameters`**: This object contains key-value pairs of query string parameters from the request URL. These parameters are typically used to pass additional data to the server.
+- **`multiValueQueryStringParameters`**: Similar to `queryStringParameters`, but allows for multiple values per key. This is useful when a query parameter can have multiple values.
+- **`pathParameters`**: This object holds any parameters that are part of the URL path. These are often used in RESTful APIs to identify resources.
+
 ### Deployment Process
 
 1. **Edit the Script**: You can modify the `index.ts` file and add additional files or folders as needed for your application logic.
@@ -59,6 +80,22 @@ This template and deployment process allow you to leverage Acurast's decentraliz
 
 ### Executing the Cloud Function
 
-Once your cloud function is deployed and running, Apillon provides you with a gateway URL that you are able to call via an HTTP POST request.
-The URL can be found on the [Apillon developer console](https://app.apillon.io/dashboard/service/cloud-functions/) when opening a specific cloud function, or it can be obtained by using the [Cloud Functions API](https://wiki.apillon.io/build/11-cloud-functions-api.md).
+Once your cloud function is deployed and running, Apillon provides you with a gateway URL that you are able to call via an HTTP POST request. The URL can be found on the [Apillon developer console](https://app.apillon.io/dashboard/service/cloud-functions/) when opening a specific cloud function, or by using the [Cloud Functions API](https://wiki.apillon.io/build/11-cloud-functions-api.md).
 
+### File Descriptions
+
+- **`handler.ts`**: This file contains the main function used for development. It simulates the function handler that will be executed in the cloud environment. This allows for local development and testing of the function's logic before deployment.
+
+- **`handler.spec.ts`**: This file is used to test the `handlePayload` function with various test cases. It ensures that the function behaves as expected under different scenarios, providing confidence in the code's reliability.
+
+- **`index.ts`**: This file serves as a boilerplate wrapper for the cloud function. It contains the code that gets hosted on the cloud environment. After building the project, this file is compiled into `index.bundle.js`, which is the actual file deployed to the cloud.
+
+### Testing Locally
+
+To test the functionality of your handler locally, you can run the following command:
+
+```
+npm run test
+```
+
+This command will execute the tests defined in `handler.spec.ts`, allowing you to verify that the `handlePayload` function works correctly with the provided test cases.
